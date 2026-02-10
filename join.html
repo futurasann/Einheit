@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EINHEIT | Join Collective</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #000; --surf: #0d0d0d; --bord: #222; --dim: #999; 
+            --accent: #00ff88; --max-w-desktop: 1100px; 
+        }
+        
+        * { box-sizing: border-box; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { 
+            background: var(--bg); color: white; font-family: 'Inter', sans-serif; 
+            margin: 0; padding: 0; overflow-x: hidden; width: 100%; 
+        }
+
+        /* NAVBAR */
+        nav { display: flex; justify-content: center; align-items: center; position: fixed; width: 100%; top: 20px; z-index: 9999; padding: 0 15px; }
+        .nav-container { 
+            width: 100%; max-width: var(--max-w-desktop); display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 25px; background: rgba(15, 15, 15, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--bord); border-radius: 100px; height: 75px; 
+        }
+        .nav-logo-img { height: 55px; width: auto; }
+
+        .wrapper { width: 100%; max-width: 600px; margin: 0 auto; padding: 150px 20px 80px; min-height: 100vh; }
+        
+        /* UI 1: FORM */
+        #main-ui { display: block; }
+        .stagger > * { opacity: 0; transform: translateY(25px); animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .stagger > *:nth-child(1) { animation-delay: 0.1s; }
+        .stagger > *:nth-child(2) { animation-delay: 0.2s; }
+
+        h2 { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; text-align: center; }
+        .sub-head { color: var(--dim); font-size: 13px; text-align: center; margin-bottom: 50px; text-transform: uppercase; letter-spacing: 2px; }
+
+        section { margin-bottom: 40px; border-top: 1px solid var(--bord); padding-top: 30px; }
+        section h3 { font-size: 11px; text-transform: uppercase; color: white; letter-spacing: 2px; margin-bottom: 25px; font-weight: 800; }
+
+        .form-group { margin-bottom: 25px; text-align: left; }
+        label { display: block; font-size: 11px; color: var(--dim); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+        
+        input, textarea {
+            width: 100%; background: var(--surf); border: 1px solid var(--bord); 
+            border-radius: 12px; padding: 15px; color: white; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;
+        }
+        input:focus, textarea:focus { border-color: #555; background: #111; }
+
+        /* KATEGORI */
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 5px; }
+        .cat-card {
+            background: var(--surf); border: 1px solid var(--bord); padding: 15px 10px;
+            border-radius: 12px; text-align: center; cursor: pointer;
+        }
+        .cat-card input { display: none; }
+        .cat-card span { font-size: 10px; font-weight: 700; color: var(--dim); text-transform: uppercase; }
+        .cat-card:has(input:checked) { border-color: white; background: #ffffff10; }
+        .cat-card:has(input:checked) span { color: white; }
+
+        /* CUSTOM CHECKBOX */
+        .checkbox-container { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; margin-bottom: 15px; }
+        .checkbox-container input { display: none; }
+        .checkmark {
+            min-width: 18px; height: 18px; border: 1px solid var(--bord); border-radius: 4px;
+            background: var(--surf); position: relative; margin-top: 2px;
+        }
+        .checkbox-container input:checked ~ .checkmark { background: white; border-color: white; }
+        .checkbox-container input:checked ~ .checkmark:after {
+            content: ""; position: absolute; left: 6px; top: 2px; width: 4px; height: 8px;
+            border: solid black; border-width: 0 2px 2px 0; transform: rotate(45deg);
+        }
+        .checkbox-text { font-size: 12px; color: var(--dim); line-height: 1.5; }
+
+        .btn-apply {
+            width: 100%; background: white; color: black; padding: 20px; border: none; border-radius: 100px;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; font-size: 12px;
+            display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;
+        }
+
+        /* UI 2: SUCCESS STATE */
+        #success-ui { display: none; text-align: center; padding: 100px 20px; flex-direction: column; align-items: center; justify-content: center; }
+        .check-icon {
+            width: 80px; height: 80px; background: var(--accent); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.3);
+            animation: iconPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.5) forwards;
+        }
+        .check-icon svg { width: 40px; height: 40px; color: black; }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes blurOut { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(10px); transform: translateY(-20px); } }
+        @keyframes blurIn { from { opacity: 0; filter: blur(10px); } to { opacity: 1; filter: blur(0); } }
+        @keyframes iconPop { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .loader { width: 16px; height: 16px; border: 2px solid #000; border-bottom-color: transparent; border-radius: 50%; animation: rotation 1s linear infinite; }
+        footer { margin-top: auto; padding: 40px 0; border-top: 1px solid var(--bord); text-align: center; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <a href="index.html"><img src="https://files.catbox.moe/iru1fz.png" class="nav-logo-img"></a>
+            <a href="index.html" style="color: var(--dim); text-decoration: none; font-size: 11px; font-weight: 600; text-transform: uppercase;">Back</a>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <div id="main-ui" class="stagger">
+            <h2>JOIN THE COLLECTIVE.</h2>
+            <p class="sub-head">This application helps us understand your brand and ensure alignment with EINHEIT’s vision.
+All submissions are reviewed carefully to maintain the quality and integrity of the collective.</p>
+
+            <form id="joinForm">
+                <section>
+                    <h3>Brand Identity</h3>
+                    <div class="form-group">
+                        <label>Brand Name</label>
+                        <input type="text" name="brand_name" placeholder="Your brand name..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Category</label>
+                        <input type="text" name="brand_focus" placeholder="Your category brand..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Description</label>
+                        <textarea name="brand_desc" rows="3" placeholder="Identify your brand..." required></textarea>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Contact & Presence</h3>
+                    <div class="form-group">
+                        <label>WhatsApp Number</label>
+                        <input type="tel" name="whatsapp" placeholder="Your whatsapl number..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>TikTok Account</label>
+                        <input type="text" name="tiktok" placeholder="@yourtiktok" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Logo Direct Link (URL)</label>
+                        <input type="url" name="logo_url" placeholder="https://..." required>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Application Details</h3>
+                    <div class="form-group">
+                        <label>Why do you want to join EINHEIT?</label>
+                        <textarea name="why_join" rows="3" placeholder="Tell us your motivation..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>What type of brand are you?</label>
+                        <div class="category-grid">
+                            <label class="cat-card"><input type="radio" name="brand_type" value="Primary Brand" required><span>Primary Brand</span></label>
+                            <label class="cat-card"><input type="radio" name="brand_type" value="Sub-Brand"><span>Sub-Brand</span></label>
+                            <label class="cat-card"><input type="radio" name="brand_type" value="Partner Brand"><span>Partner Brand</span></label>
+                        </div>
+                    </div>
+                </section>
+
+                <section style="border: none; padding-top: 0;">
+                    <label class="checkbox-container">
+                        <input type="checkbox" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">I confirm that this brand is original and the information provided is accurate.</span>
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">I understand that submission does not guarantee automatic acceptance.</span>
+                    </label>
+                    
+                    <button type="submit" class="btn-apply" id="submitBtn">
+                        <span id="btnText">Apply to Collective</span>
+                    </button>
+                </section>
+            </form>
+        </div>
+
+        <div id="success-ui">
+            <div class="check-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h2 style="margin-bottom:15px">RECEIVED.</h2>
+            <p style="color:var(--dim); font-size:14px; margin-bottom:40px; line-height:1.6">
+                Thank you for your submission.<br>Your application is under review, and successful applicants will be contacted via WhatsApp.
+            </p>
+            <a href="index.html" style="color:white; text-decoration:none; font-size:11px; font-weight:800; border:1px solid var(--bord); padding:18px 45px; border-radius:100px; text-transform:uppercase; letter-spacing:2px">Back to Home</a>
+        </div>
+
+        <footer>
+            <div style="font-family: 'JetBrains Mono'; font-size: 10px; color: #444; letter-spacing: 2px;">© 2026 EINHEIT COLLECTIVE. ALL RIGHTS RESERVED.</div>
+        </footer>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxjxo81Jnfo3jHsaeInl8ZpoE0SmjSDCZWE4TP7CfL1SlYRRhvklaQeb6DYojVAtwkG/exec';
+        const form = document.getElementById('joinForm');
+        const btn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const mainUI = document.getElementById('main-ui');
+        const successUI = document.getElementById('success-ui');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="loader"></span> PROCESSING';
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => response.json())
+                .then(res => {
+                    if(res.result === "success") {
+                        mainUI.style.animation = 'blurOut 0.6s ease-in forwards';
+                        setTimeout(() => {
+                            mainUI.style.display = 'none';
+                            successUI.style.display = 'flex';
+                            successUI.style.animation = 'blurIn 0.8s ease-out forwards';
+                            window.scrollTo({top: 0, behavior: 'smooth'});
+                        }, 600);
+                    }
+                })
+                .catch(error => {
+                    btn.disabled = false;
+                    btnText.innerHTML = 'RETRY';
+                });
+        });
+    </script>
+</body>
+</html>
