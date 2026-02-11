@@ -13,13 +13,12 @@
         * { box-sizing: border-box; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; width: 100%; }
 
-        /* NAVBAR PILL */
+        /* NAVBAR PILL (Style Lama Kamu) */
         nav { display: flex; justify-content: center; align-items: center; position: fixed; width: 100%; top: 20px; z-index: 9999; padding: 0 15px; }
         .nav-container { 
             width: 100%; max-width: var(--max-w-desktop); display: flex; justify-content: space-between; align-items: center; 
             padding: 0 25px; background: rgba(15,15,15,0.8); backdrop-filter: blur(20px); border: 1px solid var(--bord); border-radius: 100px; height: 75px; 
         }
-        
         .nav-logo-img { height: 55px; width: auto; object-fit: contain; }
 
         .desktop-menu { display: none; gap: 30px; }
@@ -61,27 +60,22 @@
 
         /* DATA DISPLAY */
         .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .brand-img { width: 75px; height: 75px; border-radius: 15px; border: 1px solid var(--bord); object-fit: cover; }
+        .brand-img { width: 75px; height: 75px; border-radius: 15px; border: 1px solid var(--bord); object-fit: cover; background: #111; }
         .brand-name { font-size: 22px; font-weight: 800; margin: 0; text-transform: uppercase; }
         
         .info-grid { border-top: 1px solid var(--bord); padding-top: 20px; }
         .label { font-size: 9px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block; }
-        .value { font-size: 14px; font-weight: 500; margin-bottom: 18px; display: block; color: #eee; }
+        .value { font-size: 14px; font-weight: 500; margin-bottom: 18px; display: block; color: #eee; line-height: 1.4; }
         
         .status { color: var(--accent); font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-top: 10px; text-transform: uppercase; }
         .error-msg { color: #ff4444; font-size: 12px; margin-bottom: 15px; display: none; text-align: center; font-family: 'JetBrains Mono'; }
 
-        /* COPYRIGHT STYLING */
         footer { margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--bord); }
         .copyright { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; }
 
         @media (min-width: 992px) {
             .desktop-menu { display: flex; }
             .hamburger-wrapper { display: none; }
-        }
-
-        @media (max-width: 768px) { 
-            .nav-container { height: 70px; } 
         }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -128,13 +122,14 @@
         <div id="result-section">
             <div class="card">
                 <div class="profile-header">
-                    <img src="" id="res-img" class="brand-img">
+                    <img src="" id="res-img" class="brand-img" onerror="this.src='https://files.catbox.moe/9q363i.png'">
                     <div>
                         <p class="brand-name" id="res-brand">---</p>
-                        <span id="res-id" style="font-size:12px; color:var(--dim); font-family: 'JetBrains Mono';"></span>
+                        <span id="res-id-display" style="font-size:12px; color:var(--dim); font-family: 'JetBrains Mono';"></span>
                     </div>
                 </div>
-                <div class="info-grid" id="info-content"></div>
+                <div class="info-grid" id="info-content">
+                    </div>
             </div>
             <button class="btn-scan" style="background:transparent; border:1px solid var(--bord); color:var(--dim); font-size:11px;" onclick="location.reload()">Back</button>
         </div>
@@ -149,7 +144,8 @@
         
         window.onclick = function(e) { 
             if (!e.target.closest('.hamburger-wrapper')) {
-                document.getElementById('dropdownMenu').classList.remove('active');
+                const drop = document.getElementById('dropdownMenu');
+                if(drop) drop.classList.remove('active');
             }
         }
 
@@ -169,29 +165,45 @@
             loading.style.display = 'block';
 
             try {
-                const scriptURL = "https://script.google.com/macros/s/AKfycbwmKAxnIgCy_uKLQtaQKYuIVHwXKGIwez1qrCr39LHlYUofrUbx7D5g72_ERoyLggo6/exec";
+                // SCRIPT URL TETAP SAMA
+                const scriptURL = "https://script.google.com/macros/s/AKfycbzr-NXRdRx8LFD4x_6i3wM9JM5H27eqHxDIIhqNvQA8POXYwM9yMprOTxa-8EZwyCwo/exec";
                 const response = await fetch(`${scriptURL}?id=${id}`);
                 const result = await response.json();
 
-                if (result && result.brand) {
-                    document.getElementById('res-brand').innerText = result.brand;
-                    document.getElementById('res-img').src = result.img || "https://files.catbox.moe/9q363i.png";
-                    document.getElementById('res-id').innerText = "ID: " + id;
+                if (result && result.result !== "not_found") {
+                    // Update Header
+                    document.getElementById('res-brand').innerText = result.brand; // Kolom D
+                    document.getElementById('res-img').src = result.img || "https://files.catbox.moe/9q363i.png"; // Kolom E
+                    document.getElementById('res-id-display').innerText = "ID: " + result.id; // Kolom A
 
+                    // Format Tanggal Jika Ada
+                    let joinDate = "-";
+                    if(result.date) {
+                        const d = new Date(result.date);
+                        joinDate = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    }
+
+                    // Render Info Grid (Sesuai Urutan Baru: A-I)
                     const infoContainer = document.getElementById('info-content');
                     infoContainer.innerHTML = `
                         <span class="label">Owner</span>
                         <span class="value">${result.owner || '-'}</span>
+                        
                         <span class="label">WhatsApp Number</span>
-                        <span class="value">${result.wa || '-'}</span>
+                        <span class="value"><a href="https://wa.me/${result.wa}" target="_blank" style="color:var(--accent); text-decoration:none;">+${result.wa || '-'}</a></span>
+                        
                         <span class="label">Brand Focus</span>
                         <span class="value">${result.focus || '-'}</span>
+                        
                         <span class="label">Join Date</span>
-                        <span class="value">${result.join_date || result.date || '-'}</span>
+                        <span class="value">${joinDate}</span>
+                        
                         <span class="label">Brand Slogan</span>
-                        <span class="value">${result.slogan || '-'}</span>
+                        <span class="value">"${result.slogan || '-'}"</span>
+                        
                         <span class="label">Description</span>
                         <span class="value">${result.desc || '-'}</span>
+                        
                         <div class="status">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                             Verified as an official Einheit member
