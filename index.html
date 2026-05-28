@@ -1,169 +1,785 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Progress | Loka Style</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>EINHEIT // Member Evaluation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-color: #04050f;
+            --purple-neon: #a855f7;
+            --purple-glow: rgba(168, 85, 247, 0.35);
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --glass-input-bg: rgba(255, 255, 255, 0.01);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            color: white;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Ambient Glow Background */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(130px);
+            z-index: -1;
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        body::before {
+            top: -100px;
+            left: 25%;
+            background: var(--purple-glow);
+            animation: floatGlow 15s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            bottom: 50px;
+            right: 20%;
+            background: var(--blue-glow);
+            animation: floatGlow 15s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.05); }
+        }
+
+        /* PENYESUAIAN UKURAN: Container diperketat agar form tidak terlalu melar lebar */
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 1. Header Logo */
+        .brand-header {
             display: flex;
             justify-content: center;
-            align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
-                        url('https://files.catbox.moe/wn816d.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            padding: 40px 0 20px 0;
         }
 
-        .container {
-            width: 90%;
-            max-width: 450px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            padding: 40px 30px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        .logo-link {
+            display: inline-block;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .logo-img {
+            height: 100px; /* Ukuran diperkecil agar lebih elegan */
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .logo-link:hover .logo-img {
+            transform: scale(1.03);
+            filter: drop-shadow(0 0 18px rgba(168, 85, 247, 0.5));
+        }
+
+        /* 2. Hero Section */
+        .hero {
             text-align: center;
+            padding: 16px 0 36px 0;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Styling Logo */
-        .server-logo {
-            width: 120px; /* Ukuran logo */
-            height: auto;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
-            animation: float 3s ease-in-out infinite; /* Biar logo melayang halus */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem; /* Ukuran disesuaikan dari 2.5rem agar proporsional */
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #cccc.cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        h1 {
-            font-weight: 800;
-            font-size: 18px;
-            margin-bottom: 5px;
-            letter-spacing: 2px;
+        .hero p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* 3. Form Card Glassmorphism (Optimasi Ukuran & Padding) */
+        .form-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 36px; /* Padding dikurangi sedikit agar compact */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px; /* Jarak antar field dirapatkan dari 28px jadi 20px */
+            margin-bottom: 24px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .form-group label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px; /* Diperkecil agar lebih estetik komparatif */
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        .subtitle {
-            font-size: 12px;
-            color: #bbb;
-            margin-bottom: 35px;
+        /* Input Elements */
+        .form-group input[type="text"],
+        .form-group input[type="url"],
+        .form-group textarea {
+            background: var(--glass-input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px 14px; /* Padding input disesuaikan */
+            color: var(--text-main);
+            font-size: 14.5px;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
         }
 
-        .progress-wrapper {
-            margin-bottom: 10px;
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--purple-neon);
+            background: rgba(168, 85, 247, 0.02);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
         }
 
-        .label-info {
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px; /* Diperpendek agar hemat ruang vertikal */
+        }
+
+        /* CUSTOM UI: Dropdown Menu Pilihan */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+        }
+
+        .custom-select-trigger {
+            background: var(--glass-input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: var(--text-muted);
+            font-size: 14.5px;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger {
+            border-color: var(--purple-neon);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+            color: var(--text-main);
+        }
+
+        .custom-select-trigger::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-right: 2px solid var(--text-muted);
+            border-bottom: 2px solid var(--text-muted);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+            margin-right: 2px;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger::after {
+            transform: rotate(-135deg);
+            border-color: var(--purple-neon);
+        }
+
+        .custom-options {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #0b0c16;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.7);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10;
+            max-height: 200px;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+        }
+
+        .custom-select-wrapper.open .custom-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-option {
+            padding: 10px 14px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-option:hover {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--text-main);
+            padding-left: 18px;
+        }
+
+        .custom-option.selected {
+            background: rgba(168, 85, 247, 0.2);
+            color: #fff;
+        }
+
+        /* Upload Area */
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .upload-box {
+            border: 1.5px dashed var(--glass-border);
+            border-radius: 12px;
+            padding: 24px 16px; /* Lebih pendek ukurannya */
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.003);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-box:hover {
+            border-color: var(--purple-neon);
+            background: rgba(168, 85, 247, 0.01);
+        }
+
+        .upload-box svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover svg {
+            fill: var(--purple-neon);
+        }
+
+        .upload-box span {
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-group input {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            background: var(--glass-input-bg);
+        }
+
+        .checkbox-group:hover .custom-checkbox {
+            border-color: var(--purple-neon);
+        }
+
+        .checkbox-group input:checked + .custom-checkbox {
+            background: var(--purple-neon);
+            border-color: var(--purple-neon);
+        }
+
+        .checkbox-group input:checked + .custom-checkbox::after {
+            content: '✓';
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            font-size: 13.5px;
+            color: var(--text-muted);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #9333ea, #a855f7);
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.35);
+        }
+        
+        .submit-btn:disabled {
+            background: #222330;
+            color: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* CUSTOM UI: Modal Sukses */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4, 5, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-card {
+            background: rgba(15, 17, 38, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 380px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .success-card {
+            transform: scale(1);
+        }
+
+        .success-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 2px solid var(--purple-neon);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+        }
+
+        .success-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--purple-neon);
+        }
+
+        .success-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .success-card p {
+            color: var(--text-muted);
+            font-size: 13.5px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 10px 24px;
+            border-radius: 100px;
             font-size: 13px;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 14px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
+        .close-btn:hover {
+            background: #fff;
+            color: #000;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #9F9F9F 0%, #FFFFFF 100%);
-            border-radius: 50px;
-            width: 0%; 
-            transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
-        }
-
-        .percentage-text {
-            color: #FFFFFF;
-        }
-
-        .footer {
-            margin-top: 30px;
-            font-size: 11px;
-            color: #888;
-        }
-
-        .ip-badge {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 6px 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50px;
-            font-family: monospace;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.15);
+        /* Responsivitas Ukuran Layar Kecil */
+        @media (max-width: 768px) {
+            .form-grid, .upload-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+            .form-container {
+                padding: 24px 16px;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <img src="https://files.catbox.moe/8dllmv.png" alt="Logo Server" class="server-logo">
-    
-    <h1>Development Progress</h1>
-    <p class="subtitle">Currently in the refinement stage</p>
+    <header class="brand-header">
+        <a href="#" class="logo-link">
+            <img src="https://files.catbox.moe/g78ofv.png" alt="EINHEIT Logo" class="logo-img">
+        </a>
+    </header>
 
-    <div class="progress-wrapper">
-        <div class="label-info">
-            <span>TOTAL PROGRESS</span>
-            <span class="percentage-text" id="perc-val">0%</span>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="main-bar"></div>
+    <section class="container hero">
+        <h1>EINHEIT Member Evaluation</h1>
+        <p>This evaluation helps maintain accurate member and brand activity data within the EINHEIT ecosystem.</p>
+    </section>
+
+    <main class="container">
+        <form class="form-container" id="evaluationForm">
+            <div class="form-grid">
+                
+                <div class="form-group">
+                    <label for="brand-name">Brand Name</label>
+                    <input type="text" id="brand-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="owner-name">Owner Name</label>
+                    <input type="text" id="owner-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="member-id">Member ID</label>
+                    <input type="text" id="member-id" placeholder="EHT-00000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="whatsapp-number">WhatsApp Number</label>
+                    <input type="text" id="discord-username" placeholder="(countury code and number)" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="social-link">Main Social Media Link</label>
+                    <input type="url" id="social-link" placeholder="https://..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Are you still active in fictional projects?</label>
+                    <div class="custom-select-wrapper" id="selectActiveStatus">
+                        <div class="custom-select-trigger" data-placeholder="Select your status">Select your status</div>
+                        <div class="custom-options">
+                            <div class="custom-option" data-value="Active">Active</div>
+                            <div class="custom-option" data-value="Semi Active">Semi Active</div>
+                            <div class="custom-option" data-value="Hiatus">Hiatus</div>
+                            <div class="custom-option" data-value="Inactive">Inactive</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Main Project</label>
+                    <div class="custom-select-wrapper" id="selectMainProject">
+                        <div class="custom-select-trigger" data-placeholder="Select core domain">Select core domain</div>
+                        <div class="custom-options">
+                            <div class="custom-option" data-value="Smartphone">Smartphone</div>
+                            <div class="custom-option" data-value="Operating System">Operating System</div>
+                            <div class="custom-option" data-value="AI">AI</div>
+                            <div class="custom-option" data-value="Vehicle">Vehicle</div>
+                            <div class="custom-option" data-value="UI/UX">UI/UX</div>
+                            <div class="custom-option" data-value="Server">Server</div>
+                            <div class="custom-option" data-value="Other">Other</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="brand-update">Latest Brand Update</label>
+                    <textarea id="brand-update" required></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Estimated Activity Level</label>
+                    <div class="custom-select-wrapper" id="selectActivityLevel">
+                        <div class="custom-select-trigger" data-placeholder="Select activity range">Select activity range</div>
+                        <div class="custom-options">
+                            <div class="custom-option" data-value="Very Active">Very Active</div>
+                            <div class="custom-option" data-value="Active">Active</div>
+                            <div class="custom-option" data-value="Normal">Normal</div>
+                            <div class="custom-option" data-value="Low Activity">Low Activity</div>
+                            <div class="custom-option" data-value="Inactive">Inactive</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="future-plans">Future Plans / Upcoming Projects</label>
+                    <textarea id="future-plans" required></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="additional-notes">Additional Notes</label>
+                    <textarea id="additional-notes"></textarea>
+                </div>
+            </div>
+
+            <div class="upload-grid">
+                <label class="upload-box">
+                    <input type="file" id="logo-upload" accept="image/*">
+                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                    <span>Upload Brand Logo</span>
+                </label>
+
+                <label class="upload-box">
+                    <input type="file" id="poster-upload" accept="image/*">
+                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                    <span>Upload Latest Poster</span>
+                </label>
+            </div>
+
+            <label class="checkbox-group">
+                <input type="checkbox" id="remain-member" required>
+                <div class="custom-checkbox"></div>
+                <span class="checkbox-label">I still want to remain an official EINHEIT member.</span>
+            </label>
+
+            <button type="submit" class="submit-btn" id="submitBtn">SUBMIT EVALUATION</button>
+        </form>
+    </main>
+
+    <div class="modal-overlay" id="successModal">
+        <div class="success-card">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+            <h2>Submission Received</h2>
+            <p>Your evaluation data has been securely synchronized with the EINHEIT database ecosystem.</p>
+            <button class="close-btn" id="closeModal">ACKNOWLEDGE</button>
         </div>
     </div>
 
-    <div class="footer">
-        ESTIMATED LAUNCH: <b>Tommorow</b><br>
-        <div class="ip-badge">©EINHEIT 2026</div>
-    </div>
-</div>
+    <script>
+        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw54kozDRGmrDEJCnEVULCIFEgP_MpQWzQam0mv6YG7AwypSOXA4k7QqM8oOeg_Tdhgrw/exec';
 
-<script>
-    const progressGoal = 92; // GANTI ANGKA PROGRESS DI SINI
+        // Logika Dropdown Menu Pilihan
+        document.querySelectorAll('.custom-select-trigger').forEach(trigger => {
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const wrapper = this.parentElement;
+                document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+                    if (w !== wrapper) w.classList.remove('open');
+                });
+                wrapper.classList.toggle('open');
+            });
+        });
 
-    window.onload = () => {
-        const bar = document.getElementById('main-bar');
-        const text = document.getElementById('perc-val');
-        
-        setTimeout(() => {
-            bar.style.width = progressGoal + "%";
-        }, 500);
+        document.querySelectorAll('.custom-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const wrapper = this.closest('.custom-select-wrapper');
+                const trigger = wrapper.querySelector('.custom-select-trigger');
+                
+                wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                trigger.textContent = this.textContent;
+                trigger.style.color = '#f3f4f6'; 
+                wrapper.dataset.value = this.dataset.value;
+                wrapper.classList.remove('open');
+                trigger.style.borderColor = 'var(--glass-border)';
+            });
+        });
 
-        let start = 0;
-        const duration = 2000;
-        const increment = progressGoal / (duration / 16);
+        window.addEventListener('click', () => {
+            document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+        });
 
-        const counter = setInterval(() => {
-            start += increment;
-            if (start >= progressGoal) {
-                text.innerText = progressGoal + "%";
-                clearInterval(counter);
-            } else {
-                text.innerText = Math.floor(start) + "%";
-            }
-        }, 16);
-    };
-</script>
+        // Interaksi Input File Upload UI
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const label = this.closest('.upload-box').querySelector('span');
+                    label.textContent = this.files[0].name;
+                    label.style.color = '#a855f7';
+                }
+            });
+        });
 
+        // LOGIKA KIRIM DATA KE GOOGLE SHEET
+        const form = document.getElementById('evaluationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const modal = document.getElementById('successModal');
+        const closeModalBtn = document.getElementById('closeModal');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validasi Dropdown Custom
+            let dropdownValid = true;
+            const activeStatus = document.getElementById('selectActiveStatus').dataset.value;
+            const mainProject = document.getElementById('selectMainProject').dataset.value;
+            const activityLevel = document.getElementById('selectActivityLevel').dataset.value;
+
+            if (!activeStatus) { dropdownValid = false; document.getElementById('selectActiveStatus').querySelector('.custom-select-trigger').style.borderColor = '#ef4444'; }
+            if (!mainProject) { dropdownValid = false; document.getElementById('selectMainProject').querySelector('.custom-select-trigger').style.borderColor = '#ef4444'; }
+            if (!activityLevel) { dropdownValid = false; document.getElementById('selectActivityLevel').querySelector('.custom-select-trigger').style.borderColor = '#ef4444'; }
+
+            if (!dropdownValid) return;
+
+            // Mengubah teks button saat sedang memproses
+            submitBtn.disabled = true;
+            submitBtn.textContent = "SYNCHRONIZING...";
+
+            // Membuat format FormData pencocokan data parameter script
+            const formData = new URLSearchParams();
+            formData.append('brandName', document.getElementById('brand-name').value);
+            formData.append('ownerName', document.getElementById('owner-name').value);
+            formData.append('memberId', document.getElementById('member-id').value);
+            formData.append('whatsappnumber', document.getElementById('whatsapp-number').value);
+            formData.append('socialLink', document.getElementById('social-link').value);
+            formData.append('activeStatus', activeStatus);
+            formData.append('mainProject', mainProject);
+            formData.append('brandUpdate', document.getElementById('brand-update').value);
+            formData.append('activityLevel', activityLevel);
+            formData.append('futurePlans', document.getElementById('future-plans').value);
+            formData.append('additionalNotes', document.getElementById('additional-notes').value);
+            formData.append('remainMember', document.getElementById('remain-member').checked ? "Yes" : "No");
+
+            // Mengirim data menggunakan Fetch API (AJAX tanpa reload halaman)
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.result === 'success') {
+                    modal.classList.add('active'); // Tampilkan modal kustom sukses
+                } else {
+                    alert('Gagal mengirim data. Cek pengaturan script.');
+                }
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert('Terjadi kesalahan jaringan atau URL Script salah.');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "SUBMIT EVALUATION";
+            });
+        });
+
+        // Reset Formulir dan Dropdown Setelah Sukses Terkirim
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            form.reset();
+            
+            document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+                delete wrapper.dataset.value;
+                const trigger = wrapper.querySelector('.custom-select-trigger');
+                trigger.textContent = trigger.dataset.placeholder;
+                trigger.style.color = 'var(--text-muted)';
+                trigger.style.borderColor = 'var(--glass-border)';
+            });
+            
+            document.getElementById('logo-upload').closest('.upload-box').querySelector('span').textContent = "Upload Brand Logo";
+            document.getElementById('poster-upload').closest('.upload-box').querySelector('span').textContent = "Upload Latest Poster";
+            document.querySelectorAll('.upload-box span').forEach(s => s.style.color = 'var(--text-muted)');
+        });
+    </script>
 </body>
 </html>
